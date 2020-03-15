@@ -1,22 +1,30 @@
 {
   "name": "Confidence Intervals for Amazon",
-  "version": "0.0.0",
+  "version": "0.0",
   "description": "Adds confidence intervals to Amazon ratings.",
-  "icons": {
-    "128": "icon_128.png"
-  },
+  "permissions": ["activeTab", "declarativeContent", "storage"],
   "background": {
-    "persistent": false,
-    "scripts": [
-      "background_script.js"
-    ]
+    "scripts": ["background.js"],
+    "persistent": false
   },
-  "permissions": [
-    "https://*.google.com/",
-    "activeTab"
-  ],
-  "browser_action": {
-    "default_icon": "icon_16.png",
-    "default_popup": "popup.html"
-  }
+  "page_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/get_started16.png",
+      "32": "images/get_started32.png",
+      "48": "images/get_started48.png",
+      "128": "images/get_started128.png"
+    }
+  },
+  "options_page": "options.html",
+  "manifest_version": 2
 }
+//   "permissions": [
+//     "https://*.google.com/",
+//     "activeTab"
+//   ],
+//   "browser_action": {
+//     "default_icon": "icon_16.png",
+//     "default_popup": "popup.html"
+//   }
+// }
