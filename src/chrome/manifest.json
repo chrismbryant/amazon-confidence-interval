@@ -1,0 +1,22 @@
+{
+  "name": "Confidence Intervals for Amazon",
+  "version": "0.0.0",
+  "description": "Adds confidence intervals to Amazon ratings.",
+  "icons": {
+    "128": "icon_128.png"
+  },
+  "background": {
+    "persistent": false,
+    "scripts": [
+      "background_script.js"
+    ]
+  },
+  "permissions": [
+    "https://*.google.com/",
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_icon": "icon_16.png",
+    "default_popup": "popup.html"
+  }
+}
