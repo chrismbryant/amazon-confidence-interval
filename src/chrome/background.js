@@ -1,20 +1,39 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/*global chrome*/
 
-'use strict';
+const tabStore = {};
 
-chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.set({color: '#3aa757'}, function() {
-    console.log("The color is green.");
+/**
+ *  This function takes a tabId and verifies if the tab url is the amazon search page
+ *    If it is, it sets the active icon and runs content.js
+ *    If not, set the inactive icon
+ *
+ *
+ * @param {*} tabId
+ */
+function updateTab(tabId) {
+  chrome.tabs.get(tabId, tab => {
+    if (/amazon\..*\/s\?/.exec(tab.url)) {
+      chrome.tabs.executeScript(tabId, { file: "content.js" });
+
+      chrome.pageAction.setIcon({
+        tabId,
+        path: "/images/icon_active.png"
+      });
+    } else {
+      chrome.pageAction.setIcon({
+        tabId,
+        path: "/images/icon_inactive.png"
+      });
+    }
   });
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-      chrome.declarativeContent.onPageChanged.addRules([{
-        conditions: [new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {hostEquals: 'developer.chrome.com'},
-        })
-        ],
-            actions: [new chrome.declarativeContent.ShowPageAction()]
-      }]);
-    });
+}
+
+chrome.tabs.onActivated.addListener(activeInfo => {
+  updateTab(activeInfo.tabId);
+});
+
+chrome.tabs.onUpdated.addListener((tabId, change) => {
+  if (change.url) {
+    updateTab(tabId);
+  }
 });
