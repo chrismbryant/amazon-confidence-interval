@@ -5,7 +5,6 @@
  *   If the new url is the amazon search page, set the active icon and execute inject.js
  *   Else, set the inactive icon
  *
- * @param {*} tabId
  */
 
 chrome.tabs.onUpdated.addListener((tabId, change) => {

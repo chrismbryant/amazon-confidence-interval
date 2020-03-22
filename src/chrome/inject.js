@@ -1,5 +1,8 @@
-/*global chrome*/
-
+/**
+ * This script may run more than one time within the same context (e.g, if use goes to another results page)
+ * To avoid namespace issues, we check if window.injectConfidenceInterval already exists (meaning the
+ * script has run before and doesn't need to be re-declared)
+ */
 if (!this.injectConfidenceInterval) {
   this.injectConfidenceInterval = async () => {
     const productsSelector =
