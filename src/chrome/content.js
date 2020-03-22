@@ -1,3 +1,3 @@
 /*global chrome*/
 
-alert("OK");
+alert("TAB CREATED");
