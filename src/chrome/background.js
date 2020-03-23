@@ -12,16 +12,6 @@ chrome.tabs.onUpdated.addListener((tabId, change) => {
     chrome.tabs.get(tabId, tab => {
       if (/amazon\..*\/s\?/.exec(tab.url)) {
         chrome.tabs.executeScript(tabId, { file: "chrome/inject.js" });
-
-        // chrome.pageAction.setIcon({
-        //   tabId,
-        //   path: "/images/icon_active.png"
-        // });
-      } else {
-        // chrome.pageAction.setIcon({
-        //   tabId,
-        //   path: "/images/icon_inactive.png"
-        // });
       }
     });
   }
