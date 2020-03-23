@@ -48,6 +48,24 @@ function evaluateRatings(ratingDistribution, numRatings) {
     return getBetaConfidenceInterval(numRatings, numPositive, 0.95);
 }
 
-const ratingDistribution = [0.05, 0.04, 0.01, 0.10, 0.80];
-console.log(ratingDistribution);
-console.log(evaluateRatings(ratingDistribution, 1000));
+/**
+ * Get a "positive experience rating" confidence interval based only on the 
+ * average star rating and the total number of ratings. Scale ratings in the
+ * domain [1, 5] to the range [0, 1], then treat the result like the average
+ * success rate of a series of independent Bernoulli trials with fixed (but
+ * unknown) probability of success.
+
+ * @param {number} averageRating - average value of all star ratings.
+ * @param {number} numRatings - total number of ratings given.
+ * 
+ * @returns {[number, number, number]} - [
+ *     proportion - average rating scaled to range [0, 1],
+ *     lower - lower bound on confidence interval,
+ *     upper - upper bound on confidence interval 
+ * ]
+ */
+function evaluateAverageRating(avgRating, numRatings) {
+    const avgProb = (avgRating - 1)/4;
+    const numPositive = Math.floor(avgProb * numRatings);
+    return getBetaConfidenceInterval(numRatings, numPositive, 0.95);
+}
