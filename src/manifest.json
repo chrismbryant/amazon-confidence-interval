@@ -9,7 +9,7 @@
     "storage"
   ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["chrome/background.js"],
     "persistent": false
   },
   "content_scripts": [
@@ -21,7 +21,7 @@
   "page_action": {
     "default_title": "Amazon Confidence Intervals",
     "default_icon": {
-      "16": "images/icon_inactive.png"
+      "38": "images/icon38.png"
     }
   },
   "manifest_version": 2
