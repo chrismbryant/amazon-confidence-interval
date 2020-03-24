@@ -44,6 +44,10 @@ async function chromeConfig(production){
                     ignore: entryFiles,
                     transformPath: targetPath => targetPath.substr(src.length)
                 },
+                {
+                    from: 'src/shared/**/*',
+                    transformPath: targetPath => targetPath.substr(3)
+                },
             ]),
         ],
     }
