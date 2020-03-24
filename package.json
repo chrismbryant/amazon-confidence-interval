@@ -1,0 +1,17 @@
+{
+  "name": "amazon-confidence-interval",
+  "version": "0.0.1",
+  "description": "A browser extension which adds confidence intervals to Amazon ratings.",
+  "repository": "https://github.com/chrismbryant/amazon-confidence-interval.git",
+  "author": "chrismbryant, aeciorc, musicin3d",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build:chrome": "webpack --env.target=chrome"
+  },
+  "devDependencies": {
+    "glob": "^7.1.6",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
