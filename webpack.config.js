@@ -7,12 +7,14 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 /**
  * @param {string} env.target  The platform to build for. Possible values: chrome, firefox
  * @param {boolean} env.production  True to build a production-optimized extesion. Default: false
+ * @param {boolean} env.watch  True to enable webpack's watch mode. Default: false
  * @returns {object|Promise<object>}  Webpack configuration
  */
 module.exports = env =>{
     const production = !!env.production
+    const watch = !!env.watch
     switch(env.target){
-        case 'chrome':  return chromeConfig(production)
+        case 'chrome':  return chromeConfig(production, watch)
         case 'firefox':
         case 'edge':
         case 'userscript':  throw new Error("Build target not yet configured")
@@ -23,14 +25,16 @@ module.exports = env =>{
 
 /**
  * @param {boolean} production
+ * @param {boolean} watch
  * @returns {Promise<object>}
  */
-async function chromeConfig(production){
+async function chromeConfig(production, watch){
     const src = 'src/chrome'
     const dist = 'dist/chrome'
     const entryFiles = await findEntryFiles(src)
     return {
         devtool: "source-map",
+        watch,
         entry: createEntryConfig(entryFiles),
         output: {
             filename: '[name].js',
