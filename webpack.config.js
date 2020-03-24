@@ -30,6 +30,7 @@ async function chromeConfig(production){
     const dist = 'dist/chrome'
     const entryFiles = await findEntryFiles(src)
     return {
+        devtool: "source-map",
         entry: createEntryConfig(entryFiles),
         output: {
             filename: '[name].js',
