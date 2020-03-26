@@ -1,4 +1,6 @@
 import calculations from "../shared/calculations"
+import scraper from "../shared/scraper"
+
 
 /**
  * This script may run more than one time within the same context (e.g, if use goes to another results page)
@@ -7,34 +9,15 @@ import calculations from "../shared/calculations"
  */
 if (!window.injectConfidenceInterval) {
     window.injectConfidenceInterval = async () => {
-        const productsSelector =
-            "div.a-section.a-spacing-none.a-spacing-top-micro>.a-row.a-size-small";
-
-        let productsDOM = document.querySelectorAll(productsSelector);
-
-        // Wait until product ratings have been loaded into the DOM
-        while (!productsDOM.length) {
-            await new Promise(r => setTimeout(r, 500));
-            productsDOM = document.querySelectorAll(productsSelector);
-        }
-
-        /**
-         * For each rating, extract the score and number of reviews, calculate CI (TODO) and insert it into the DOM
-         */
-        for (let product of productsDOM) {
-            const ratingText = product.querySelector("span.a-icon-alt").innerText;
-
-            const rating = +ratingText.split(" out of")[0]; //score out of 5
-            const reviewsText = product.querySelector("span.a-size-base").innerText; //number of reviews
-            const reviews = parseFloat(reviewsText.replace(/[,.]/g, ""));
+        const products = await scraper.findAllProducts()
+        for (let product of products) {
             const confidenceDOM = document.createElement("div");
-            const ci = calculations.evaluateAverageRating(rating, reviews)
-            confidenceDOM.innerHTML = `CI for score ${rating}, n=${reviews} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
-            product.insertAdjacentElement("beforeend", confidenceDOM);
+            const ci = calculations.evaluateAverageRating(product.rating, product.reviewCount)
+            confidenceDOM.innerHTML = `CI for score ${product.rating}, n=${product.reviewCount} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
+            product.dom.insertAdjacentElement("beforeend", confidenceDOM);
         }
     };
 }
 
-
 // noinspection JSIgnoredPromiseFromCall
-injectConfidenceInterval()
+window.injectConfidenceInterval()
