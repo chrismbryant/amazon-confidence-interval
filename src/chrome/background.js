@@ -6,11 +6,11 @@
  */
 
 chrome.tabs.onUpdated.addListener((tabId, change) => {
-  if (change.status == "complete") {
-    chrome.tabs.get(tabId, tab => {
-      if (/amazon\..*\/s\?/.exec(tab.url)) {
-        chrome.tabs.executeScript(tabId, { file: "inject.js" });
-      }
-    });
-  }
+    if (change.status == "complete") {
+        chrome.tabs.get(tabId, tab => {
+            if (/amazon\..*\/s\?/.exec(tab.url)) {
+                chrome.tabs.executeScript(tabId, {file: "inject.js"});
+            }
+        });
+    }
 });
