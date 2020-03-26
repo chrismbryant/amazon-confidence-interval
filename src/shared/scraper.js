@@ -2,7 +2,7 @@
 
 /** @typedef Product
  *  @property dom  DOM element that contains the relevant data
- *  @property {number} rating  Average rating
+ *  @property {number} rating  Average rating. If there are not reviews, this will be null.
  *  @property {number} reviewCount  Number of reviews
  */
 
@@ -21,15 +21,14 @@ export default {
                 run()
             }
             function run(){
-                const products = document.querySelectorAll("div.a-section.a-spacing-none.a-spacing-top-micro>.a-row.a-size-small")
-                resolve([...products].map(product =>{
-                    const rating = product.querySelector("span.a-icon-alt")
-                    const reviews = product.querySelector("span.a-size-base")
-                    if(!rating || !reviews)  return
+                const images = document.querySelectorAll('[data-component-type=s-product-image]')
+                const products = [...images].map(image => image.closest('.a-section'))
+                resolve(products.map(product =>{
+                    const stats = getStats(product)
                     return {
                         dom: product,
-                        rating: +rating.innerText.split(" out of")[0],
-                        reviewCount: parseFloat(reviews.innerText.replace(/[,.]/g, ""))
+                        rating: stats.rating,
+                        reviewCount: stats.reviewCount
                     }
                 }))
             }
@@ -38,6 +37,21 @@ export default {
 
 }
 
+
+
+function getStats(product) {
+    let rating, reviewCount
+    const section = product.querySelector(".a-section.a-spacing-none.a-spacing-top-micro>.a-row.a-size-small")
+    if(section){
+        rating = product.querySelector("span.a-icon-alt").innerText.split(" out of")[0] * 1
+        reviewCount = parseFloat(product.querySelector("span.a-size-base").innerText.replace(/[,.]/g, ""))
+    }
+    else {
+        rating = null
+        reviewCount = 0
+    }
+    return {rating, reviewCount}
+}
 
 
 
