@@ -12,12 +12,6 @@
     "scripts": ["background.js"],
     "persistent": false
   },
-  "content_scripts": [
-    {
-      "matches": ["*://*.amazon.com/s?*", "*://*.amazon.ca/s?*"],
-      "js": ["shared/confidence_interval.js"]
-    }
-  ],
   "page_action": {
     "default_title": "Amazon Confidence Intervals",
     "default_icon": {
