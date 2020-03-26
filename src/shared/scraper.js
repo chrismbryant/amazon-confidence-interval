@@ -10,7 +10,7 @@
 export default {
 
     /**
-     * Find all products on the page
+     * Find all products on the page and extract some basic stats
      * @returns {Promise<Product>}
      */
     async findAllProducts(){
