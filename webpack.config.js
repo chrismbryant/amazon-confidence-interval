@@ -50,7 +50,7 @@ async function chromeConfig(production, watch){
                     transformPath: targetPath => targetPath.substr(src.length)
                 },
                 {
-                    from: 'src/shared/**/*',
+                    from: 'src/shared/images/**/*',
                     transformPath: targetPath => targetPath.substr(3)
                 },
             ]),
