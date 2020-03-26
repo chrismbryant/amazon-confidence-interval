@@ -1,5 +1,3 @@
-/*global chrome*/
-
 /**
  *  This listener executes a callback when the tab reloads or changes url
  *   If the new url is the amazon search page, set the active icon and execute inject.js
