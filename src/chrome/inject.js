@@ -22,8 +22,9 @@ let scrollTicking = false
 
 function dumpAvgConfidence(product){
     const confidenceDOM = document.createElement("div");
+    confidenceDOM.style.marginTop = '.5em'
     const ci = calculations.evaluateAverageRating(product.rating, product.reviewCount)
-    confidenceDOM.innerHTML = `CI for score ${product.rating}, n=${product.reviewCount} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
+    confidenceDOM.innerHTML = `AVG CI for ${product.rating}, n=${product.reviewCount} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
     product.dom.insertAdjacentElement("beforeend", confidenceDOM);
 }
 
@@ -49,8 +50,13 @@ function handleScroll(evt){
 
 
 async function dumpDistConfidence(product){
-    scraper.getDistribution(product)
-    product.dom.style.backgroundColor = 'blue'
+    await scraper.loadDistributions(product)
+    product.dom.style.backgroundColor = 'lightblue'
+    const confidenceDOM = document.createElement("div");
+    confidenceDOM.style.marginTop = '.5em'
+    const ci = calculations.evaluateRatings(product.distributions, product.reviewCount)
+    confidenceDOM.innerHTML = `DIST CI for ${product.distributions}, n=${product.reviewCount} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
+    product.dom.insertAdjacentElement("beforeend", confidenceDOM);
 }
 
 
@@ -62,10 +68,10 @@ function productInView(product){
         right: window.innerWidth,
         bottom: window.innerHeight
     }
-    return !(
-        rect.right < view.left
-        || rect.left > view.right
-        || rect.bottom < view.top
-        || rect.top > view.bottom
+    return (
+        rect.right >= view.left
+        && rect.left <= view.right
+        && rect.bottom >= view.top
+        && rect.top <= view.bottom
     );
 }

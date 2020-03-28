@@ -22,6 +22,7 @@ export default {
                 run()
             }
             function run(){
+                //TODO sometimes products are featured together, and this selects the entire block instead of each product
                 const images = document.querySelectorAll('[data-component-type=s-product-image]')
                 const products = [...images].map(image => image.closest('.a-section'))
                 resolve( products.map(product =>{
@@ -38,11 +39,18 @@ export default {
     },
 
     /**
-     * Retrieves the rating distribution for the given product
-     * @param {Product} product
+     * Loads rating distributions into the given product object
+     * @param {Product} product  If distributions are found, they will be added to this object
      */
-    getDistribution(product){
-        console.log(product.dom.querySelector('[data-a-popover]').dataset.aPopover)
+    async loadDistributions(product){
+        if(!product.reviewCount)  return
+        const popover = JSON.parse(product.dom.querySelector('[data-a-popover]').dataset.aPopover)
+        if(!popover.url)  return
+        const body = await fetch(popover.url).then(response => response.text())
+        // noinspection JSCheckFunctionSignatures
+        const dom = (new DOMParser()).parseFromString(body, 'text/html')
+        const distributions = dom.documentElement.querySelectorAll('#histogramTable td.a-text-right a')
+        product.distributions = [...distributions].map( distribution => parseFloat(distribution.innerText.trim()) / 100 )
     }
 
 }
