@@ -1,4 +1,4 @@
-const stdlib = require('@stdlib/stdlib/dist/stdlib-stats-base-dists-flat')
+import stdlib from "@stdlib/stdlib/dist/stdlib-stats-base-dists-flat";
 
 
 /** @typedef ConfidenceInterval
