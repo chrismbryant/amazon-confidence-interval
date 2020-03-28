@@ -1,4 +1,4 @@
-import stdlib from "@stdlib/stdlib/dist/stdlib-stats-base-dists-flat";
+import quantile from "@stdlib/stats/base/dists/beta/quantile";
 
 
 /** @typedef ConfidenceInterval
@@ -65,8 +65,8 @@ export default {
 function getBetaConfidenceInterval(n, x, conf = 0.95){
     const p = 1 - conf;
     const proportion = x / n;
-    let lower = stdlib.base.dists.beta.quantile(p / 2, x, n - x + 1);
-    let upper = stdlib.base.dists.beta.quantile(1 - p / 2, x + 1, n - x);
+    let lower = quantile(p / 2, x, n - x + 1);
+    let upper = quantile(1 - p / 2, x + 1, n - x);
     if (x == 0) {
         lower = 0.0
     }
