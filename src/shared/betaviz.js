@@ -149,7 +149,7 @@ export default {
         g.append("path")
             .datum(data)
             .attr("d", area)
-            .attr("fill", "url(#color-gradient");
+            .attr("fill", "url(#color-gradient)");
 
         // Specify triangle configuration
         const triangleConfig = {
