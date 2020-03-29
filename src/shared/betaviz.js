@@ -1,29 +1,8 @@
 import calculations from "./calculations";
-import pdf from "@stdlib/stats/base/dists/beta/pdf";
-import linspace from "@stdlib/math/utils/linspace";
 import * as d3 from "d3";
 import "d3-selection-multi";
 
 export default {
-
-    /**
-     * Get [x, y] coordinates of a beta distribution.
-     * @param {number} alpha - "alpha" parameter of beta distribution
-     * @param {number} beta - "beta" parameter of beta distribution
-     * @param {number} resolution - number of steps to split the domain [0, 1] into
-     * @returns {number[][]} dist - array of [x, y] coordinate pairs
-     */
-    getBetaPDF(alpha, beta, resolution = 200) {
-        var dist = [];
-        const xs = linspace(0, 1, resolution);
-        for (var i = 0; i < xs.length; i++) {
-            const x = xs[i] * 1.0;
-            const y = pdf(x, alpha, beta);
-            dist.push([x, y]);
-        }
-        return dist;
-    },
-
     /**
      * Create basic CI text based on rating data.
      * @param {Object.<string, (number|number[])>} ratingData - object containing
@@ -80,7 +59,7 @@ export default {
         const alpha = betaParams["alpha"];
         const beta = betaParams["beta"];
         const proportion = betaParams["proportion"];
-        const data = this.getBetaPDF(alpha, beta);
+        const data = calculations.getBetaPDF(alpha, beta);
         const xMax = d3.max(d3.transpose(data)[0]);
         const yMax = d3.max(d3.transpose(data)[1]);
 
