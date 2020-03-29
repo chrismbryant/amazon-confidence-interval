@@ -1,4 +1,5 @@
-import calculations from "../shared/calculations"
+import calculations from "../shared/calculations";
+import betaviz from "../shared/betaviz";
 
 /**
  * This script may run more than one time within the same context (e.g, if use goes to another results page)
@@ -18,8 +19,12 @@ if (!window.injectConfidenceInterval) {
             productsDOM = document.querySelectorAll(productsSelector);
         }
 
+        // Create color scale
+        const cmap = "interpolateSpectral";
+        const colorScale = betaviz.getColorScale(cmap);
+
         /**
-         * For each rating, extract the score and number of reviews, calculate CI (TODO) and insert it into the DOM
+         * For each rating, extract the score and number of reviews, calculate CI and insert it into the DOM
          */
         for (let product of productsDOM) {
             const ratingText = product.querySelector("span.a-icon-alt").innerText;
@@ -27,9 +32,10 @@ if (!window.injectConfidenceInterval) {
             const rating = +ratingText.split(" out of")[0]; //score out of 5
             const reviewsText = product.querySelector("span.a-size-base").innerText; //number of reviews
             const reviews = parseFloat(reviewsText.replace(/[,.]/g, ""));
-            const confidenceDOM = document.createElement("div");
-            const ci = calculations.evaluateAverageRating(rating, reviews)
-            confidenceDOM.innerHTML = `CI for score ${rating}, n=${reviews} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
+            var confidenceDOM = document.createElement("div");
+            // confidenceDOM.innerHTML = betaviz.createBasicText({"avg": rating}, reviews, "avg");
+            const betaParams = calculations.getBetaParams({"avg": rating}, reviews, "avg");
+            betaviz.addViz(confidenceDOM, betaParams, colorScale);
             product.insertAdjacentElement("beforeend", confidenceDOM);
         }
     };
