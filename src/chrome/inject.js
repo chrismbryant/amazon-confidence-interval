@@ -24,7 +24,7 @@ if (!window.injectConfidenceInterval) {
         const colorScale = betaviz.getColorScale(cmap);
 
         /**
-         * For each rating, extract the score and number of reviews, calculate CI and insert it into the DOM
+         * For each product, create a beta distribution visualization and insert it into the DOM
          */
         for (let product of productsDOM) {
             const ratingText = product.querySelector("span.a-icon-alt").innerText;
