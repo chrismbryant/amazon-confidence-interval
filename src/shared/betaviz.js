@@ -185,7 +185,7 @@ export default {
                 .attr("id", `${position}-triangle`)
                 .attr("fill", "white")
                 .attr("d", trianglePath(triangleSize, triangleConfig[position]["up"]))
-                .attr("filter", "url(#soft-shadow")
+                .attr("filter", "url(#soft-shadow)")
                 .attr("transform", function(d) {
                     const x = numPositive / numRatings * width;
                     const y = triangleConfig[position]["y"];
