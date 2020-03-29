@@ -32,7 +32,7 @@ if (!window.injectConfidenceInterval) {
             const rating = +ratingText.split(" out of")[0]; //score out of 5
             const reviewsText = product.querySelector("span.a-size-base").innerText; //number of reviews
             const reviews = parseFloat(reviewsText.replace(/[,.]/g, ""));
-            var confidenceDOM = document.createElement("div");
+            const confidenceDOM = document.createElement("div");
             // confidenceDOM.innerHTML = betaviz.createBasicText({"avg": rating}, reviews, "avg");
             const betaParams = calculations.getBetaParams({"avg": rating}, reviews, "avg");
             betaviz.addViz(confidenceDOM, betaParams, colorScale);
