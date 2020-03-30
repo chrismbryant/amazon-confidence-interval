@@ -44,13 +44,13 @@ export default {
      */
     async loadDistributions(product){
         if(!product.reviewCount)  return
-        const popover = JSON.parse(product.dom.querySelector('[data-a-popover]').dataset.aPopover)
+        const popover = JSON.parse(product.dom.querySelector('.a-spacing-top-micro [data-a-popover]').dataset.aPopover)
         if(!popover.url)  return
         const body = await fetch(popover.url).then(response => response.text())
         // noinspection JSCheckFunctionSignatures
         const dom = (new DOMParser()).parseFromString(body, 'text/html')
-        const distributions = dom.documentElement.querySelectorAll('#histogramTable td.a-text-right a')
-        product.distributions = [...distributions].map( distribution => parseFloat(distribution.innerText.trim()) / 100 )
+        const distributions = dom.documentElement.querySelectorAll('#histogramTable td.a-text-right .a-size-base')
+        product.distributions = [...distributions].map( distribution => parseFloat(distribution.innerText) / 100 )
     }
 
 }
