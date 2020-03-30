@@ -1,5 +1,14 @@
 import calculations from "./calculations";
-import * as d3 from "d3";
+import {select as d3select} from "d3";
+import {range as d3range} from "d3";
+import {scaleLinear as d3scaleLinear} from "d3";
+import {curveLinear as d3curveLinear} from "d3";
+import {max as d3max} from "d3";
+import {transpose as d3transpose} from "d3";
+import {area as d3area} from "d3";
+import {interpolateSpectral as d3interpolateSpectral} from "d3";
+import {interpolateRdYlBu as d3interpolateRdYlBu} from "d3";
+import {interpolateRdYlGn as d3interpolateRdYlGn} from "d3";
 import "d3-selection-multi";
 import {v4 as uuidv4} from "uuid";
 
@@ -37,10 +46,10 @@ export default {
      */
     getColorScale(cmap = "interpolateSpectral") {
         const numSteps = 100;
-        const colorRange = d3.range(numSteps).map(d => {
-            return d3[cmap](d / (numSteps - 1));
+        const colorRange = d3range(numSteps).map(d => {
+            return colorMaps[cmap](d / (numSteps - 1));
         });
-        const colorScale = d3.scaleLinear().range(colorRange);
+        const colorScale = d3scaleLinear().range(colorRange);
         return colorScale;
     },
 
@@ -62,8 +71,8 @@ export default {
         const beta = betaParams["beta"];
         const proportion = betaParams["proportion"];
         const data = calculations.getBetaPDF(alpha, beta);
-        const xMax = d3.max(d3.transpose(data)[0]);
-        const yMax = d3.max(d3.transpose(data)[1]);
+        const xMax = d3max(d3transpose(data)[0]);
+        const yMax = d3max(d3transpose(data)[1]);
         const uuid = uuidv4().split("-")[0];
         const colorScale = this.getColorScale(cmap);
         const grayScale = cmapToGrayScale(cmap, true);
@@ -97,7 +106,7 @@ export default {
          * @returns {HTMLElement} svg - SVG node
          */
         function makeSVG(element, width, height) {
-            var svg = d3.select(confidenceDOM)
+            var svg = d3select(confidenceDOM)
                 .append("svg")
                 .attr("id", `svg-${uuid}`)
                 .attr("width", width)
@@ -113,18 +122,18 @@ export default {
         function getDistPath(data) {
 
             // Function to scale X values
-            const scaleX = d3.scaleLinear()
+            const scaleX = d3scaleLinear()
                 .domain([0, xMax])
                 .range([0, width])
 
             // Function to scale Y values
-            const scaleY = d3.scaleLinear()
+            const scaleY = d3scaleLinear()
                 .domain([0, yMax])
                 .range([0, height / 2 - padding])
 
             // Function to specify path of Beta distribution violin plot
-            const distPath = d3.area()
-                .curve(d3.curveLinear)
+            const distPath = d3area()
+                .curve(d3curveLinear)
                 .x(d => scaleX(d[0]))
                 .y0(d => height / 2 + scaleY(d[1]))
                 .y1(d => height / 2 - scaleY(d[1]));
@@ -370,6 +379,12 @@ export default {
     }
 }
 
+const colorMaps = {
+    "interpolateSpectral": d3interpolateSpectral,
+    "interpolateRdYlBu": d3interpolateRdYlBu,
+    "interpolateRdYlGn": d3interpolateRdYlGn
+}
+
 /** 
  * Convert an RGB 255 string to luminosity.
  * See https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity
@@ -390,14 +405,12 @@ function rgbToLum(rgbString) {
  */
 function cmapToGrayScale(cmap, inverted = false) {
     const numSteps = 100;
-    const colorRange = d3.range(numSteps).map(d => {
-        const rgbString = d3[cmap](d / (numSteps - 1));
+    const colorRange = d3range(numSteps).map(d => {
+        const rgbString = colorMaps[cmap](d / (numSteps - 1));
         const lum = rgbToLum(rgbString);
         const l = inverted ? 255 - lum : lum;
         return `rgb(${l}, ${l}, ${l})`;
     });
-    const grayScale = d3.scaleLinear().range(colorRange);
+    const grayScale = d3scaleLinear().range(colorRange);
     return grayScale;
 }
-
-
