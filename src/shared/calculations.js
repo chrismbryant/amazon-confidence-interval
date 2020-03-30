@@ -1,3 +1,4 @@
+// noinspection NpmUsedModulesInstalled
 import quantile from "@stdlib/stats/base/dists/beta/quantile";
 
 

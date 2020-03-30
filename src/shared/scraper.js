@@ -61,8 +61,9 @@ function getStats(product) {
     let rating, reviewCount
     const section = product.querySelector(".a-section.a-spacing-none.a-spacing-top-micro > .a-row.a-size-small")
     if(section){
-        rating = product.querySelector("span.a-icon-alt").innerText.split(" out of")[0] * 1
-        reviewCount = parseFloat(product.querySelector("span.a-size-base").innerText.replace(/[,.]/g, ""))
+        const stats = section.children
+        rating = stats[0].getAttribute('aria-label').split(" out of")[0] * 1
+        reviewCount = parseFloat(stats[1].getAttribute('aria-label').replace(/[,.]/g, ""))
     }
     else {
         rating = null
@@ -70,6 +71,4 @@ function getStats(product) {
     }
     return {rating, reviewCount}
 }
-
-
 
