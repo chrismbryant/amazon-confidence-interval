@@ -24,7 +24,7 @@ export default {
             function run(){
                 //TODO sometimes products are featured together, and this selects the entire block instead of each product
                 const images = document.querySelectorAll('[data-component-type=s-product-image]')
-                const products = [...images].map(image => image.closest('.a-section'))
+                const products = [...images].map(image => image.closest('div'))
                 resolve( products.map(product =>{
                     const stats = getStats(product)
                     return {
