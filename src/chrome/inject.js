@@ -21,7 +21,6 @@ if (!window.injectConfidenceInterval) {
 
         // Create color scale
         const cmap = "interpolateSpectral";
-        const colorScale = betaviz.getColorScale(cmap);
 
         /**
          * For each product, create a beta distribution visualization and insert it into the DOM
@@ -35,7 +34,7 @@ if (!window.injectConfidenceInterval) {
             const confidenceDOM = document.createElement("div");
             // confidenceDOM.innerHTML = betaviz.createBasicText({"avg": rating}, reviews, "avg");
             const betaParams = calculations.getBetaParams({"avg": rating}, reviews, "avg");
-            betaviz.addViz(confidenceDOM, betaParams, colorScale);
+            betaviz.addViz(confidenceDOM, betaParams, cmap);
             product.insertAdjacentElement("beforeend", confidenceDOM);
         }
     };
