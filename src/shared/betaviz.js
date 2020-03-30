@@ -365,7 +365,7 @@ export default {
         addCenterLine(axisShapes);
         addAxisDots(axisShapes, "dark", false);
         addAxisDots(axisShapes, "light", true);
-        addTriangleTicks(g, betaParams);
+        addTriangleTicks(axisShapes, betaParams);
 
     }
 }
