@@ -20,6 +20,7 @@
   "dependencies": {
     "@stdlib/stdlib": "^0.0.91",
     "d3": "^5.15.0",
-    "d3-selection-multi": "^1.0.1"
+    "d3-selection-multi": "^1.0.1",
+    "uuid": "^7.0.2"
   }
 }
