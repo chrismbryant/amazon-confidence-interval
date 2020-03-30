@@ -51,7 +51,6 @@ function handleScroll(evt){
 
 async function dumpDistConfidence(product){
     await scraper.loadDistributions(product)
-    product.dom.style.backgroundColor = 'lightblue'
     const confidenceDOM = document.createElement("div");
     confidenceDOM.style.marginTop = '.5em'
     const ci = calculations.evaluateRatings(product.distributions, product.reviewCount)
