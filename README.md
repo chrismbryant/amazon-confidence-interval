@@ -3,7 +3,7 @@ A browser extension which adds confidence intervals to Amazon ratings.
 
 ## Notes
 
-* Inspired by this video by @3b1b: https://youtu.be/8idr1WZ1A7Q
+* Inspired by this video by [@3b1b](https://github.com/3b1b): https://youtu.be/8idr1WZ1A7Q
 * If the ratings were binary, we could just use the Beta distribution to estimate the lower and upper bounds of a 95% confidence interval, but Amazon ratings are out of 5 stars.
 * Maybe we can generalize the problem from binomial to multinomial, and use a Dirichlet distribution instead to get our confidence interval (see: https://stats.stackexchange.com/questions/15979/how-to-find-confidence-intervals-for-ratings)? But would that assume independence of each of the star ratings? Is that a fair assumption?
 * Maybe bootstrapping would be easier, but it's computationally expensive when there are a very large number of ratings and ineffective when there are a very small number of ratings.
