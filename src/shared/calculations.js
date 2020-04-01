@@ -127,9 +127,9 @@ export default {
      * @returns {number[][]} dist - array of [x, y] coordinate pairs
      */
     getBetaPDF(alpha, beta, resolution = 200) {
-        var dist = [];
+        let dist = [];
         const xs = linspace(0, 1, resolution);
-        for (var i = 0; i < xs.length; i++) {
+        for (let i = 0; i < xs.length; i++) {
             const x = xs[i] * 1.0;
             const y = pdf(x, alpha, beta);
             dist.push([x, y]);

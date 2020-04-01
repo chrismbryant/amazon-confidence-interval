@@ -28,7 +28,7 @@ export default {
      */
     createBasicText(ratingData, numRatings, method = "avg") {
         const ci = calculations.evaluateRatings(ratingData, numRatings, method);
-        var avgRatingText = "";
+        let avgRatingText = "";
         if ("avg" in ratingData) {
             avgRatingText = `score ${ratingData['avg']}, `
         }
@@ -109,7 +109,7 @@ export default {
          * @returns {HTMLElement} svg - SVG node
          */
         function makeSVG(element, width, height) {
-            var svg = d3select(confidenceDOM)
+            let svg = d3select(confidenceDOM)
                 .append("svg")
                 .attr("id", `svg-${uuid}`)
                 .attr("width", width)
@@ -165,7 +165,7 @@ export default {
          */
         function defShadowFilter(defs) {
             // Add a soft shadow filter def
-            var shadowFilter = defs.append("filter")
+            let shadowFilter = defs.append("filter")
                 .attr("id", "soft-shadow")
                 .attr("x", "-50%")
                 .attr("y", "-50%")
@@ -192,7 +192,7 @@ export default {
          * @returns {HTMLElement} g - content group node
          */
         function makeContentGroup(svg) {
-            var g = svg.append("g")
+            let g = svg.append("g")
                 .attr("class", "viz-content")
                 .attr("mask", `url(#viz-content-mask-${uuid})`);
             return g;
@@ -207,7 +207,7 @@ export default {
         function addMasks(svg, rectParams, distPath) {
 
             // Make masks group
-            var masks = svg.append("g")
+            let masks = svg.append("g")
                 .attr("class", "viz-masks")
 
             // Add mask to prevent plot from spilling outside of its rectangle
@@ -262,7 +262,7 @@ export default {
          */
         function trianglePath(size = 10, up = true) {
             const sign = up ? -1 : 1;
-            var path = `M ${-size / 2} 0 `;
+            let path = `M ${-size / 2} 0 `;
             path += `L ${size / 2} 0`;
             path += `L 0 ${sign * size * Math.sqrt(3) / 2} Z`;
             return path;
@@ -295,7 +295,7 @@ export default {
          * @param {Object.<string, number>} betaParams - distribution parameters
          */
         function addTriangleTicks(g, betaParams) {
-            var triangleTicks = g.append("g")
+            let triangleTicks = g.append("g")
                 .attr("class", "triangle-ticks")
                 .attr("filter", "url(#soft-shadow)");
             addTriangleTick(triangleTicks, betaParams, "top");
@@ -333,7 +333,7 @@ export default {
         function addAxisDots(g, colorMode, applyMask) {
 
             // Add group node to hold all dots
-            var axisDots = g.append("g")
+            let axisDots = g.append("g")
                 .attr("class", `axis-dots-${colorMode}`);
 
             // Show dots only where they occlude the distribution viz
@@ -342,7 +342,7 @@ export default {
             }
 
             // Create one dot for all 1/10th increments except the center position
-            for (var i = 1; i <= 9; i++) {
+            for (let i = 1; i <= 9; i++) {
                 if (i == 5) {
                     continue;
                 }
@@ -360,20 +360,20 @@ export default {
         const distPath = getDistPath(data);
         
         // Create SVG with defs and masks
-        var svg = makeSVG(confidenceDOM, width, height);
-        var defs = svg.append("defs");
+        let svg = makeSVG(confidenceDOM, width, height);
+        let defs = svg.append("defs");
         defGradient(defs, colorScale, "color");
         defGradient(defs, grayScale, "gray");
         defShadowFilter(defs);
         addMasks(svg, rectParams, distPath);
 
         // Add visual content to SVG
-        var g = makeContentGroup(svg);
+        let g = makeContentGroup(svg);
         addVizRectangle(g, rectParams);
         addBetaViolin(g, distPath);
 
         // Add accessory shapes to SVG
-        var axisShapes = makeAxisShapeGroup(g);
+        let axisShapes = makeAxisShapeGroup(g);
         addCenterLine(axisShapes);
         addAxisDots(axisShapes, "dark", false);
         addAxisDots(axisShapes, "light", true);
