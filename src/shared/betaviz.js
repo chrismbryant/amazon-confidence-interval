@@ -1,14 +1,17 @@
 import calculations from "./calculations";
-import {select as d3select} from "d3";
-import {range as d3range} from "d3";
-import {scaleLinear as d3scaleLinear} from "d3";
-import {curveLinear as d3curveLinear} from "d3";
-import {max as d3max} from "d3";
-import {transpose as d3transpose} from "d3";
-import {area as d3area} from "d3";
-import {interpolateSpectral as d3interpolateSpectral} from "d3";
-import {interpolateRdYlBu as d3interpolateRdYlBu} from "d3";
-import {interpolateRdYlGn as d3interpolateRdYlGn} from "d3";
+import { select as d3select } from "d3-selection";
+import {
+  range as d3range,
+  transpose as d3transpose,
+  max as d3max
+} from "d3-array";
+import { scaleLinear as d3scaleLinear } from "d3-scale";
+import { curveLinear as d3curveLinear, area as d3area } from "d3-shape";
+import {
+  interpolateSpectral as d3interpolateSpectral,
+  interpolateRdYlBu as d3interpolateRdYlBu,
+  interpolateRdYlGn as d3interpolateRdYlGn
+} from "d3-scale-chromatic";
 import "d3-selection-multi";
 import {v4 as uuidv4} from "uuid";
 
