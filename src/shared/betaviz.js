@@ -18,22 +18,15 @@ import {v4 as uuidv4} from "uuid";
 export default {
     /**
      * Create basic CI text based on rating data.
-     * @param {Object.<string, (number|number[])>} ratingData - object containing
-     *     the average rating under key "avg" and/or the 5-element rating
-     *     distribution (fraction of ratings at each star value) under key "dist".
-     * @param {number} numRatings - total number of ratings for this product.
-     * @param {string} method - which method to use to compute proportion of
-     *     reviews which were positive; must be either "avg" or "dist".
-     * @returns {string} html - HTML output string with basic CI text.
+     * @param {number} avgRating - average value of all star ratings
+     * @param {number} numRatings - total number of ratings for this product
+     * @returns {string} html - HTML output string with basic CI text
      */
-    createBasicText(ratingData, numRatings, method = "avg") {
-        const ci = calculations.evaluateRatings(ratingData, numRatings, method);
-        let avgRatingText = "";
-        if ("avg" in ratingData) {
-            avgRatingText = `score ${ratingData['avg']}, `
-        }
+    createBasicText(avgRating, numRatings) {
+        const proportion = calculations.getProportionPositiveFromAvg(avgRating);
+        const ci = calculations.evaluateRatings(proportion, numRatings);
         const lines = [
-            `CI for ${avgRatingText}n=${numRatings} is`,
+            `CI for score ${avgRating} n=${numRatings} is`,
             `proportion: ${ci.proportion}`,
             `lower: ${ci.lower}`,
             `upper: ${ci.upper}`

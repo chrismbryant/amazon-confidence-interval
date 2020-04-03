@@ -8,7 +8,16 @@ import linspace from "@stdlib/math/utils/linspace";
  *  @property {number} upper  upper bound on confidence interval
  */
 
-
+/**
+ * Recast Amazon product ratings as a binomial distribution by converting the
+ * star ratings into positive/negative (binary) ratings. Assume that each
+ * converted binary rating is the result of an independent Bernoulli trial with
+ * fixed (but unknown) probability of success. By framing the problem this way,
+ * we can use a beta distribution (the conjugate prior distribution of the
+ * Bernoulli distribution) to quantify our knowledge of the underlying probability
+ * of success (i.e. the probability of having a "positive" experience with the
+ * Amazon product).
+ */
 export default {
 
     /**
@@ -41,54 +50,17 @@ export default {
     },
 
     /**
-     * Compute the proportion of reviews which gave a product a "positive" rating,
-     * either using the "avg" method (where the input is the average star rating) 
-     * or "dist" method (where the input is the 5-element discrete distribution
-     * from the Amazon rating percentage histogram).
+     * Compute the "alpha" and "beta" parameters for a beta distribution given an
+     * observed number of ratings and proportion of positive ratings.
      *
-     * @param {Object.<string, (number|number[])>} ratingData - object containing
-     *     the average rating under key "avg" and/or the 5-element rating
-     *     distribution (fraction of ratings at each star value) under key "dist".
-     * @param {string} method - which method to use to compute proportion of
-     *     reviews which were positive; must be either "avg" or "dist".
-     * @returns {number} proportion - proportion of ratings which were positive.
-     */
-    getProportionPositive(ratingData, method = "avg") {
-        if (method == "avg") {
-            return this.getProportionPositiveFromAvg(ratingData["avg"]);
-        } else if (method == "dist") {
-            return this.getProportionPositiveFromDist(ratingData["dist"]);
-        } else {
-            throw `'method' must be either 'dist' or 'avg', not '${method}'`;
-        }
-    },
-
-    /**
-     * Recast Amazon product ratings as a binomial distribution by converting the
-     * star ratings into positive/negative (binary) ratings. Assume that each
-     * converted binary rating is the result of an independent Bernoulli trial with
-     * fixed (but unknown) probability of success. By framing the problem this way,
-     * we can use a beta distribution (the conjugate prior distribution of the
-     * Bernoulli distribution) to quantify our knowledge of the underlying probability
-     * of success (i.e. the probability of having a "positive" experience with the
-     * Amazon product).
-     *
-     * In this function, we use the rating data to compute the "alpha" and "beta"
-     * parameters for the beta distribution described above.
-     *
-     * @param {Object.<string, (number|number[])>} ratingData - object containing
-     *     the average rating under key "avg" and/or the 5-element rating
-     *     distribution (fraction of ratings at each star value) under key "dist".
+     * @param {number} proportion - proportion of ratings which were positive.
      * @param {number} numRatings - total number of ratings for this product.
-     * @param {string} method - which method to use to compute proportion of
-     *     reviews which were positive; must be either "avg" or "dist".
      * @returns {Object.<string, number>} betaParams - object containing "alpha"
      *     and "beta" parameters for the beta distribution, as well as the
      *     estimated "proportion" and number "numPositive" of ratings which were 
      *     positve, and the total number of ratings "numRatings".
      */
-    getBetaParams(ratingData, numRatings, method = "avg") {
-        const proportion = this.getProportionPositive(ratingData, method);
+    getBetaParams(proportion, numRatings) {
         const numPositive = Math.floor(proportion * numRatings);
         const betaParams = {
             "alpha": numPositive + 1,
@@ -101,20 +73,15 @@ export default {
     },
 
     /**
-     * Use Amazon rating data and a beta distribution to create a 95% confidence 
-     * interval on the probability of having a "positive" experience with the product.
-     * (See `getBetaParams` for details.)
+     * Use the proportion of positive Amazon ratings to create a beta-
+     * distribution-based 95% confidence interval for the probability of having a
+     * "positive" experience with the product.
      *
-     * @param {Object.<string, (number|number[])>} ratingData - object containing
-     *     the average rating under key "avg" and/or the 5-element rating
-     *     distribution (fraction of ratings at each star value) under key "dist".
+     * @param {number} proportion - proportion of ratings which were positive.
      * @param {number} numRatings - total number of ratings for this product.
-     * @param {string} method - which method to use to compute proportion of
-     *     reviews which were positive; must be either "avg" or "dist".
      * @returns {ConfidenceInterval}
      */
-    evaluateRatings(ratingData, numRatings, method = "avg") {
-        const proportion = this.getProportionPositive(ratingData, method);
+    evaluateRatings(proportion, numRatings) {
         const numPositive = Math.floor(proportion * numRatings);
         return getBetaConfidenceInterval(numRatings, numPositive, 0.95);
     },

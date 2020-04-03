@@ -32,8 +32,9 @@ if (!window.injectConfidenceInterval) {
             const reviewsText = product.querySelector("span.a-size-base").innerText; //number of reviews
             const reviews = parseFloat(reviewsText.replace(/[,.]/g, ""));
             const confidenceDOM = document.createElement("div");
-            // confidenceDOM.innerHTML = betaviz.createBasicText({"avg": rating}, reviews, "avg");
-            const betaParams = calculations.getBetaParams({"avg": rating}, reviews, "avg");
+            const proportion = calculations.getProportionPositiveFromAvg(rating);
+            // confidenceDOM.innerHTML = betaviz.createBasicText(rating, reviews);
+            const betaParams = calculations.getBetaParams(proportion, reviews);
             betaviz.addViz(confidenceDOM, betaParams, cmap);
             product.insertAdjacentElement("beforeend", confidenceDOM);
         }
