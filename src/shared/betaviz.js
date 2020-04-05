@@ -38,7 +38,7 @@ export default {
     /**
      * Get a linear D3 color scale based on a D3 color map.
      * @param {string} cmap - D3 color map
-     * @param {Object} colorScale - linear D3 color scale
+     * @return {Object} linear D3 color scale
      */
     getColorScale(cmap = "interpolateSpectral") {
         const numSteps = 100;
@@ -51,7 +51,7 @@ export default {
 
     /**
      * Create an SVG with a beta distribution violin plot visualization.
-     * @param {HTMLElement} confidenceDOM - HTML element in which to embed the SVG
+     * @param {HTMLElement|HTMLDivElement} confidenceDOM - HTML element in which to embed the SVG
      * @param {Object.<string, number>} betaParams - distribution parameters
      * @param {string} cmap - D3 color map name
      */

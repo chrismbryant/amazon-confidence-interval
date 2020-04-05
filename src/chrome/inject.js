@@ -10,8 +10,8 @@ let scrollTicking = false
     const products = await scraper.findAllProducts()
     for (let product of products) {
         if(!product.reviewCount) continue
-        insertBetaViz(product)
         dumpAvgConfidence(product)
+        insertAvgBetaViz(product)
     }
     noDistProducts = products
     window.addEventListener('resize', handleScroll)
@@ -24,27 +24,42 @@ let scrollTicking = false
 function dumpAvgConfidence(product){
     const confidenceDOM = document.createElement("div");
     confidenceDOM.style.marginTop = '.5em'
-    const ci = calculations.evaluateAverageRating(product.rating, product.reviewCount)
+    const pro = calculations.getProportionPositiveFromAvg(product.rating)
+    const ci = calculations.evaluateRatings(pro, product.reviewCount)
     confidenceDOM.innerHTML = `AVG CI for ${product.rating}, n=${product.reviewCount} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
     product.dom.insertAdjacentElement("beforeend", confidenceDOM);
 }
 
 
 /**
- * For each product, create a beta distribution visualization and insert it into the DOM
+ * For each product, create a beta distribution visualization based on average rating
+ * and insert it into the DOM
+ * @param {Product} product
  */
-function insertBetaViz(product){
+function insertAvgBetaViz(product){
     // Create color scale
     const cmap = "interpolateSpectral";
-    const ratingText = product.querySelector("span.a-icon-alt").innerText;
-    const rating = +ratingText.split(" out of")[0]; //score out of 5
-    const reviewsText = product.querySelector("span.a-size-base").innerText; //number of reviews
-    const reviews = parseFloat(reviewsText.replace(/[,.]/g, ""));
     const confidenceDOM = document.createElement("div");
-    const proportion = calculations.getProportionPositiveFromAvg(rating);
-    const betaParams = calculations.getBetaParams(proportion, reviews);
+    const proportion = calculations.getProportionPositiveFromAvg(product.rating);
+    const betaParams = calculations.getBetaParams(proportion, product.reviewCount);
     betaviz.addViz(confidenceDOM, betaParams, cmap);
-    product.insertAdjacentElement("beforeend", confidenceDOM);
+    product.dom.insertAdjacentElement("beforeend", confidenceDOM);
+}
+
+
+/**
+ * For each product, create a beta distribution visualization based on distribution
+ * and insert it into the DOM
+ * @param {Product} product
+ */
+function insertDistBetaViz(product){
+    // Create color scale
+    const cmap = "interpolateSpectral";
+    const confidenceDOM = document.createElement("div");
+    const proportion = calculations.getProportionPositiveFromDist(product.distributions);
+    const betaParams = calculations.getBetaParams(proportion, product.reviewCount);
+    betaviz.addViz(confidenceDOM, betaParams, cmap);
+    product.dom.insertAdjacentElement("beforeend", confidenceDOM);
 }
 
 
@@ -56,7 +71,9 @@ function handleScroll(evt){
         for(let product of noDistProducts) {
             if (productInView(product)){
                 // noinspection JSIgnoredPromiseFromCall
-                dumpDistConfidence(product)
+                dumpDistConfidence(product).then(()=>{
+                    insertDistBetaViz(product)
+                })
             }
             else {
                 leftover.push(product)
@@ -72,7 +89,8 @@ async function dumpDistConfidence(product){
     await scraper.loadDistributions(product)
     const confidenceDOM = document.createElement("div");
     confidenceDOM.style.marginTop = '.5em'
-    const ci = calculations.evaluateRatings(product.distributions, product.reviewCount)
+    const pro = calculations.getProportionPositiveFromDist(product.distributions)
+    const ci = calculations.evaluateRatings(pro, product.reviewCount)
     confidenceDOM.innerHTML = `DIST CI for ${product.distributions}, n=${product.reviewCount} is <br> proportion: ${ci.proportion} <br> lower: ${ci.lower} <br> upper: ${ci.upper}`;
     product.dom.insertAdjacentElement("beforeend", confidenceDOM);
 }

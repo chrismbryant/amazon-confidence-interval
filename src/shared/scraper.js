@@ -50,7 +50,7 @@ export default {
         // noinspection JSCheckFunctionSignatures
         const dom = (new DOMParser()).parseFromString(body, 'text/html')
         const distributions = dom.documentElement.querySelectorAll('#histogramTable td.a-text-right .a-size-base')
-        product.distributions = [...distributions].map( distribution => parseFloat(distribution.innerText) / 100 )
+        product.distributions = [...distributions].map( distribution => parseFloat(distribution.innerText) / 100 ).reverse()
     }
 
 }
