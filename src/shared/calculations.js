@@ -1,6 +1,7 @@
 // noinspection NpmUsedModulesInstalled
 import quantile from "@stdlib/stats/base/dists/beta/quantile";
-
+import pdf from "@stdlib/stats/base/dists/beta/pdf";
+import linspace from "@stdlib/math/utils/linspace";
 
 /** @typedef ConfidenceInterval
  *  @property {number} proportion  proportion of ratings which were positive
@@ -8,48 +9,101 @@ import quantile from "@stdlib/stats/base/dists/beta/quantile";
  *  @property {number} upper  upper bound on confidence interval
  */
 
-
+/**
+ * Recast Amazon product ratings as a binomial distribution by converting the
+ * star ratings into positive/negative (binary) ratings. Assume that each
+ * converted binary rating is the result of an independent Bernoulli trial with
+ * fixed (but unknown) probability of success. By framing the problem this way,
+ * we can use a beta distribution (the conjugate prior distribution of the
+ * Bernoulli distribution) to quantify our knowledge of the underlying probability
+ * of success (i.e. the probability of having a "positive" experience with the
+ * Amazon product).
+ */
 export default {
+
     /**
-     * Get a "positive experience rating" based on a distribution of ratings
-     * from a 5-star rating scale, treating 4 and 5-star ratings as "positive",
-     * and all others as "not positive". This recasts the 5-star rating confidence
-     * problem as a binomial confidence interval problem, assuming that each rating
-     * is an independent Bernoulli trial with fixed (but unknown) probability of
-     * success.
+     * By scaling a product's average star rating from the range [1, 5] to the range 
+     * [0, 1], compute a proxy measure for the proportion of ratings which were 
+     * "positive". 
      *
-     * @param {[number, ..., number]} ratingDistribution - 5-element array, where the
-     *     first element represents the fraction of all ratings which were 1 star, the
-     *     second element represents the fraction of all ratings which were 2 stars,
-     *     and so on.
-     * @param {number} numRatings - total number of ratings given.
+     * @param {number} avgRating - average value of all star ratings
+     * @returns {number} proportion - proportion of ratings which were positive
+     */
+    getProportionPositiveFromAvg(avgRating) {
+        const proportion = (avgRating - 1) / 4;
+        return proportion;
+    },
+
+    /**
+     * By finding the number of ratings which were 4 or 5 stars, compute the proportion 
+     * of reviews which gave a product a "positive" rating. Since Amazon provides a 
+     * histogram showing the percentage of reviews which fell in each star category, we 
+     * just need to sum the 4 and 5 star percentages.
      *
+     * @param {number[]} ratingDistribution - 5-element array, where the first element 
+     *     represents the fraction of all ratings which were 1 star, the second element 
+     *     represents the fraction of all ratings which were 2 stars, and so on.
+     * @returns {number} proportion - proportion of ratings which were positive
+     */
+    getProportionPositiveFromDist(ratingDistribution) {
+        const proportion = ratingDistribution[3] + ratingDistribution[4];
+        return proportion;
+    },
+
+    /**
+     * Compute the "alpha" and "beta" parameters for a beta distribution given an
+     * observed number of ratings and proportion of positive ratings.
+     *
+     * @param {number} proportion - proportion of ratings which were positive.
+     * @param {number} numRatings - total number of ratings for this product.
+     * @returns {Object.<string, number>} betaParams - object containing "alpha"
+     *     and "beta" parameters for the beta distribution, as well as the
+     *     estimated "proportion" and number "numPositive" of ratings which were 
+     *     positve, and the total number of ratings "numRatings".
+     */
+    getBetaParams(proportion, numRatings) {
+        const numPositive = Math.floor(proportion * numRatings);
+        const betaParams = {
+            "alpha": numPositive + 1,
+            "beta": numRatings - numPositive + 1,
+            "proportion": proportion,
+            "numPositive": numPositive,
+            "numRatings": numRatings
+        };
+        return betaParams
+    },
+
+    /**
+     * Use the proportion of positive Amazon ratings to create a beta-
+     * distribution-based 95% confidence interval for the probability of having a
+     * "positive" experience with the product.
+     *
+     * @param {number} proportion - proportion of ratings which were positive.
+     * @param {number} numRatings - total number of ratings for this product.
      * @returns {ConfidenceInterval}
      */
-    evaluateRatings(ratingDistribution, numRatings) {
-        const fracPositive = ratingDistribution[3] + ratingDistribution[4];
-        const numPositive = Math.floor(fracPositive * numRatings);
+    evaluateRatings(proportion, numRatings) {
+        const numPositive = Math.floor(proportion * numRatings);
         return getBetaConfidenceInterval(numRatings, numPositive, 0.95);
     },
 
     /**
-     * Get a "positive experience rating" confidence interval based only on the
-     * average star rating and the total number of ratings. Scale ratings in the
-     * domain [1, 5] to the range [0, 1], then treat the result like the average
-     * success rate of a series of independent Bernoulli trials with fixed (but
-     * unknown) probability of success.
-
-     * @param {number} avgRating - average value of all star ratings.
-     * @param {number} numRatings - total number of ratings given.
-     *
-     * @returns {ConfidenceInterval}
+     * Get [x, y] coordinates of a beta distribution.
+     * @param {number} alpha - "alpha" parameter of beta distribution
+     * @param {number} beta - "beta" parameter of beta distribution
+     * @param {number} resolution - number of steps to split the domain [0, 1] into
+     * @returns {number[][]} dist - array of [x, y] coordinate pairs
      */
-    evaluateAverageRating(avgRating, numRatings) {
-        const avgProb = (avgRating - 1) / 4;
-        const numPositive = Math.floor(avgProb * numRatings);
-        return getBetaConfidenceInterval(numRatings, numPositive, 0.95);
+    getBetaPDF(alpha, beta, resolution = 200) {
+        let dist = [];
+        const xs = linspace(0, 1, resolution);
+        for (let i = 0; i < xs.length; i++) {
+            const x = xs[i] * 1.0;
+            const y = pdf(x, alpha, beta);
+            dist.push([x, y]);
+        }
+        return dist;
     }
-
 }
 
 
