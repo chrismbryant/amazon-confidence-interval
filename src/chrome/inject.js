@@ -12,8 +12,8 @@ let scrollTicking = false
         if(!product.reviewCount) continue
         dumpAvgConfidence(product)
         insertAvgBetaViz(product)
+        noDistProducts.push(product)
     }
-    noDistProducts = products
     window.addEventListener('resize', handleScroll)
     window.addEventListener('scroll', handleScroll)
     handleScroll()
