@@ -12,8 +12,24 @@ import {
   interpolateRdYlBu as d3interpolateRdYlBu,
   interpolateRdYlGn as d3interpolateRdYlGn
 } from "d3-scale-chromatic";
-import "d3-selection-multi";
 import {v4 as uuidv4} from "uuid";
+
+/**
+ * Apply every key/value pair of an object as an attribute on a D3 selection.
+ *
+ * Replaces the deprecated `d3-selection-multi` `.attrs()` helper, which was
+ * pinned to D3 v1 and pulled a vulnerable copy of d3-color into the bundle.
+ *
+ * @param {Object} selection - D3 selection
+ * @param {Object.<string, *>} attrs - attribute name/value pairs
+ * @returns {Object} the same selection, so calls can still be chained
+ */
+function setAttrs(selection, attrs) {
+    for (const [name, value] of Object.entries(attrs)) {
+        selection.attr(name, value);
+    }
+    return selection;
+}
 
 export default {
     /**
@@ -204,11 +220,12 @@ export default {
                 .attr("class", "viz-masks")
 
             // Add mask to prevent plot from spilling outside of its rectangle
-            masks.append("mask")
-                .attr("id", `viz-content-mask-${uuid}`)
-                .append("rect")
-                    .attrs(rectParams)
-                    .attr("fill", "white");
+            setAttrs(
+                masks.append("mask")
+                    .attr("id", `viz-content-mask-${uuid}`)
+                    .append("rect"),
+                rectParams
+            ).attr("fill", "white");
 
             // Add mask to switch between dark and light modes when occluded by beta viz
             masks.append("mask")
@@ -225,12 +242,13 @@ export default {
          * @param {Object} rectParams - object containing SVG rectangle attributes
          */
         function addVizRectangle(g, rectParams) {
-            g.append("g")
-                .attr("class", "viz-rectangle-group")
-                .append("rect")
-                    .attr("class", "viz-rectangle")
-                    .attrs(rectParams)
-                    .attr("fill", "#e9e9e9");
+            setAttrs(
+                g.append("g")
+                    .attr("class", "viz-rectangle-group")
+                    .append("rect")
+                        .attr("class", "viz-rectangle"),
+                rectParams
+            ).attr("fill", "#e9e9e9");
         }
 
         /**
