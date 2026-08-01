@@ -1,7 +1,6 @@
+const fs = require('fs')
 const path = require('path')
-const glob = require('glob')
 const CopyPlugin = require('copy-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 
 
 /**
@@ -39,21 +38,26 @@ async function chromeConfig(production, watch){
         output: {
             filename: '[name].js',
             path: path.resolve(__dirname, dist),
+            clean: true,
         },
         mode: (production ? 'production' : 'development'),
         plugins: [
-            new CleanWebpackPlugin(),
-            new CopyPlugin([
-                {
-                    from: src+'/**/*',
-                    ignore: entryFiles,
-                    transformPath: targetPath => targetPath.substr(src.length)
-                },
-                {
-                    from: 'src/shared/images/**/*',
-                    transformPath: targetPath => targetPath.substr(3)
-                },
-            ]),
+            new CopyPlugin({
+                patterns: [
+                    {
+                        // Everything in src/chrome that isn't a bundle entry
+                        // point (manifest.json, init.txt, ...).
+                        context: src,
+                        from: '**/*',
+                        globOptions: {ignore: ['**/*.js']},
+                    },
+                    {
+                        context: 'src/shared/images',
+                        from: '**/*',
+                        to: 'shared/images',
+                    },
+                ],
+            }),
         ],
     }
 }
@@ -65,15 +69,11 @@ async function chromeConfig(production, watch){
  * @return {Promise<string[]>}  Resolves to a list of file paths
  */
 async function findEntryFiles(dir, type = 'js'){
-    const pattern = path.resolve(__dirname, dir, '*.'+type)
-    return new Promise((resolve, reject) =>{
-        glob(pattern, {}, (err, files) =>{
-            if(err) return reject(err)
-            resolve(
-                files.map( file => path.relative(__dirname, file) )
-            )
-        })
-    })
+    const absDir = path.resolve(__dirname, dir)
+    const entries = await fs.promises.readdir(absDir, {withFileTypes: true})
+    return entries
+        .filter( entry => entry.isFile() && entry.name.endsWith('.'+type) )
+        .map( entry => path.relative(__dirname, path.join(absDir, entry.name)) )
 }
 
 /**

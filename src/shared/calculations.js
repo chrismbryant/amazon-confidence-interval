@@ -1,6 +1,6 @@
-import quantile from "@stdlib/stats/base/dists/beta/quantile";
-import pdf from "@stdlib/stats/base/dists/beta/pdf";
-import linspace from "@stdlib/math/utils/linspace";
+import quantile from "@stdlib/stats-base-dists-beta-quantile";
+import pdf from "@stdlib/stats-base-dists-beta-pdf";
+import linspace from "@stdlib/array-linspace";
 
 /** @typedef ConfidenceInterval
  *  @property {number} proportion  proportion of ratings which were positive

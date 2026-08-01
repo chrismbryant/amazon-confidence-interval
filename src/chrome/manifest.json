@@ -3,10 +3,8 @@
   "version": "0.0",
   "description": "Adds confidence intervals to Amazon ratings.",
   "permissions": [
-    "activeTab",
-    "*://*.amazon.com/s?*",
-    "*://*.amazon.ca/s?*",
-    "storage"
+    "https://*.amazon.com/s?*",
+    "https://*.amazon.ca/s?*"
   ],
   "background": {
     "scripts": ["background.js"],
